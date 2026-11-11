@@ -27,6 +27,7 @@ Please use fake data when trying the demo.
 | `rfa_field_map.csv` | Form label to PDF field name, with field type (70 rows) |
 | `rfa_template.pdf` | Blank DWC Form RFA |
 | `lib/pdf-lib.min.js` | [pdf-lib](https://github.com/Hopding/pdf-lib) 1.17.1, MIT License |
+| `lib/LICENSE-pdf-lib.txt` | pdf-lib license (also embedded in `index.html`) |
 
 ## Build
 

@@ -1,4 +1,9 @@
 <!doctype html>
+<!--
+  RFA Form Filler by Dennis Dionisio (https://github.com/siuu3p/rfa-form-filler)
+  Fills the California DWC Form RFA entirely in the browser. No data leaves this computer.
+  Uses pdf-lib (https://github.com/Hopding/pdf-lib), MIT License; full notice above the bundled library below.
+-->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -28,6 +33,8 @@
   button { font:inherit; padding:9px 16px; border-radius:6px; border:1px solid var(--line); background:var(--card); color:var(--text); cursor:pointer; }
   button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
   #status { align-self:center; color:var(--muted); }
+  footer { border-top:1px solid var(--line); margin-top:8px; padding-top:10px; font-size:13px; color:var(--muted); }
+  footer a { color:var(--accent); }
 </style>
 </head>
 <body>
@@ -41,8 +48,35 @@
     <button type="button" id="clear">Clear form</button>
     <span id="status" role="status"></span>
   </div>
+  <footer>
+    Made by <a href="https://github.com/siuu3p" target="_blank" rel="noopener">Dennis Dionisio</a> ·
+    PDF filling by <a href="https://github.com/Hopding/pdf-lib" target="_blank" rel="noopener">pdf-lib</a> (MIT License)
+  </footer>
 </main>
-<script>!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t=t||self).PDFLib={})}(this,(function(t){"use strict";
+<script>/*! pdf-lib v1.17.1 | https://github.com/Hopding/pdf-lib
+MIT License
+
+Copyright (c) 2019 Andrew Dillon
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t=t||self).PDFLib={})}(this,(function(t){"use strict";
 /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
     Licensed under the Apache License, Version 2.0 (the "License"); you may not use
