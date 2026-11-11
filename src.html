@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFA Local Filler</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --text:#1b1f24; --muted:#5b6470; --line:#d6dae0; --accent:#1f5fbf; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#15181c; --card:#1e2227; --text:#e6e8eb; --muted:#9aa3ad; --line:#353b43; --accent:#6ea2ff; } }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:24px 16px 80px; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
+  main { max-width:1200px; margin:0 auto; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .note { color:var(--muted); margin:0 0 20px; }
+  fieldset { background:var(--card); border:1px solid var(--line); border-radius:8px; margin:0 0 16px; padding:12px 16px 16px; }
+  legend { font-weight:600; padding:0 6px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:10px 16px; }
+  label { display:flex; flex-direction:column; gap:4px; font-size:13px; color:var(--muted); }
+  label.cb { flex-direction:row; align-items:center; gap:8px; color:var(--text); font-size:14px; }
+  input[type=text], input[type=date], textarea { font:inherit; color:var(--text); background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:7px 9px; width:100%; }
+  textarea { min-height:70px; }
+  .wide { grid-column:1 / -1; }
+  .scroll { overflow-x:auto; }
+  .rows { display:grid; grid-template-columns:24px 2fr 1fr 2fr 1fr 2fr; gap:8px 12px; align-items:center; min-width:760px; }
+  .rows .h { font-size:13px; color:var(--muted); }
+  .rows .n { color:var(--muted); text-align:right; }
+  .bar { position:sticky; bottom:0; display:flex; gap:10px; padding:12px 0; background:var(--bg); }
+  button { font:inherit; padding:9px 16px; border-radius:6px; border:1px solid var(--line); background:var(--card); color:var(--text); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  #status { align-self:center; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>DWC Form RFA — Local Filler</h1>
+  <p class="note">Runs entirely in this browser. Nothing is uploaded; the filled PDF is saved straight to your computer. Close the tab to clear the data.</p>
+  <form id="f" autocomplete="off"></form>
+  <div class="bar">
+    <button class="primary" id="go" type="button">Download filled PDF</button>
+    <button type="button" id="save" title="Remember the physician and claims administrator sections on this computer">Save defaults</button>
+    <button type="button" id="clear">Clear form</button>
+    <span id="status" role="status"></span>
+  </div>
+</main>
+<script>/*PDFLIB*/</script>
+<script>
+const TEMPLATE_B64 = "/*TEMPLATE*/";
+const MAP = /*MAP*/; // [form_label, pdf_field, type] in RFA order
+// Section boundaries are row indexes into MAP.
+const SECTIONS = [
+  ["Request type", 0, 4], ["Employee", 4, 9], ["Requesting physician", 9, 21],
+  ["Claims administrator", 21, 30], ["Requested treatment", 30, 55],
+  ["Physician signature", 55, 57], ["Claims administrator response", 57, 70],
+];
+
+const form = document.getElementById("f");
+for (const [title, a, b] of SECTIONS) {
+  const fs = document.createElement("fieldset");
+  if (title === "Requested treatment") { // one line per row, column headers once, like the paper form
+    fs.innerHTML = `<legend>${title}</legend><div class="scroll"><div class="rows"><span></span></div></div>`;
+    const rows = fs.querySelector(".rows");
+    MAP.slice(a, a + 5).forEach(([label]) => rows.insertAdjacentHTML("beforeend", `<span class="h">${label.slice(6)}</span>`));
+    MAP.slice(a, b).forEach(([label], i) => {
+      if (i % 5 === 0) rows.insertAdjacentHTML("beforeend", `<span class="n">${i / 5 + 1}</span>`);
+      const input = document.createElement("input");
+      input.type = "text"; input.name = "f" + (a + i); input.setAttribute("aria-label", label);
+      rows.append(input);
+    });
+    form.append(fs);
+    continue;
+  }
+  fs.innerHTML = `<legend>${title}</legend><div class="grid"></div>`;
+  const grid = fs.querySelector(".grid");
+  MAP.slice(a, b).forEach(([label, , type], i) => {
+    const el = document.createElement("label");
+    const input = document.createElement(label === "Comments" ? "textarea" : "input");
+    if (input.tagName === "INPUT") input.type = type === "checkbox" ? "checkbox" : type === "date" ? "date" : "text";
+    input.name = "f" + (a + i); // prefix: numeric names would index form.elements by position
+    if (type === "checkbox") { el.className = "cb"; el.append(input, label); }
+    else { el.append(label, input); if (label === "Comments") el.classList.add("wide"); }
+    grid.append(el);
+  });
+  form.append(fs);
+}
+
+const templateBytes = () => Uint8Array.from(atob(TEMPLATE_B64), c => c.charCodeAt(0));
+// Copy the PDF's own length limits (e.g. State = 2) onto the inputs so filling can't fail.
+PDFLib.PDFDocument.load(templateBytes()).then(pdf => {
+  const pf = pdf.getForm();
+  MAP.forEach(([, field, type], i) => {
+    const max = type === "text" ? pf.getTextField(field).getMaxLength() : undefined;
+    if (max) form.elements["f" + i].maxLength = max;
+  });
+});
+
+const status = document.getElementById("status");
+const mmddyyyy = v => { const [y, m, d] = v.split("-"); return `${m}/${d}/${y}`; };
+
+document.getElementById("go").onclick = async () => {
+  try {
+    const pdf = await PDFLib.PDFDocument.load(templateBytes());
+    const pf = pdf.getForm();
+    MAP.forEach(([, field, type], i) => {
+      const input = form.elements["f" + i];
+      if (type === "checkbox") { const cb = pf.getCheckBox(field); input.checked ? cb.check() : cb.uncheck(); }
+      else { const v = input.value.trim(); pf.getTextField(field).setText(v && type === "date" ? mmddyyyy(v) : v); }
+    });
+    const out = await pdf.save();
+    const name = (form.elements.f4.value.trim().split(",")[0] || "RFA").replace(/[^\w-]+/g, "_");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([out], { type: "application/pdf" }));
+    a.download = `RFA_${name}_${new Date().toISOString().slice(0, 10)}.pdf`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    status.textContent = "Saved " + a.download;
+  } catch (e) { status.textContent = "Error: " + e.message; console.error(e); }
+};
+// Defaults = Requesting physician + Claims administrator sections (MAP rows 9-29). Never patient fields.
+// Stored only in this browser's localStorage; wrapped in try/catch because storage can be blocked.
+const DEFAULT_ROWS = Array.from({ length: 21 }, (_, k) => 9 + k);
+const KEY = "rfa-filler-defaults";
+const applyDefaults = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    for (const i of DEFAULT_ROWS) if (saved[i] !== undefined) form.elements["f" + i].value = saved[i];
+  } catch {}
+};
+applyDefaults();
+document.getElementById("save").onclick = () => {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(DEFAULT_ROWS.map(i => [i, form.elements["f" + i].value.trim()]))));
+    status.textContent = "Defaults saved on this computer (physician + claims administrator).";
+  } catch { status.textContent = "Could not save defaults: this browser blocks local storage."; }
+};
+document.getElementById("clear").onclick = () => {
+  if (confirm("Clear all fields? Saved defaults will be filled back in.")) { form.reset(); applyDefaults(); status.textContent = ""; }
+};
+</script>
+</body>
+</html>

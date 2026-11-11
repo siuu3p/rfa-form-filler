@@ -1,0 +1,71 @@
+form_label,pdf_field,type
+New Request,New Request,checkbox
+Resubmission - Change in Material Facts,Resubmission  Change in Material Facts,checkbox
+Expedited Review (imminent and serious threat to health),Expedited Review Check box if employee faces an imminent and serious threat to his or her health,checkbox
+Written confirmation of a prior oral request,Check box if request is a written confirmation of a prior oral request,checkbox
+"Employee Name (Last, First, Middle)",Name Last First Middle,text
+Date of Injury,Date of Injury MMDDYYYY,date
+Date of Birth,Date of Birth MMDDYYYY,date
+Claim Number,Claim Number,text
+Employer,Employer,text
+Physician Name,Name,text
+Practice Name,Practice Name,text
+Physician Contact Name,Contact Name,text
+Physician Address,Address,text
+Physician City,City,text
+Physician State,State,text
+Physician Zip Code,Zip Code,text
+Physician Phone,Phone,text
+Physician Fax,Fax Number,text
+Specialty,Specialty,text
+NPI Number,NPI Number,text
+Physician Email,Email Address,text
+Claims Company Name,Company Name,text
+Claims Contact Name,Contact Name_2,text
+Claims Address,Address_2,text
+Claims City,City_2,text
+Claims State,State_2,text
+Claims Zip Code,Zip Code_2,text
+Claims Phone,Phone_2,text
+Claims Fax,Fax Number_2,text
+Claims Email,Email Address_2,text
+Row 1 Diagnosis,Diagnosis RequiredRow1,text
+Row 1 ICD Code,ICDCode RequiredRow1,text
+Row 1 Service/Good Requested,ServiceGood Requested RequiredRow1,text
+Row 1 CPT/HCPCS Code,CPTHCPCS Code If knownRow1,text
+"Row 1 Other Info (frequency, duration, quantity)",Other Information Frequency Duration Quantity etcRow1,text
+Row 2 Diagnosis,Diagnosis RequiredRow2,text
+Row 2 ICD Code,ICDCode RequiredRow2,text
+Row 2 Service/Good Requested,ServiceGood Requested RequiredRow2,text
+Row 2 CPT/HCPCS Code,CPTHCPCS Code If knownRow2,text
+"Row 2 Other Info (frequency, duration, quantity)",Other Information Frequency Duration Quantity etcRow2,text
+Row 3 Diagnosis,Diagnosis RequiredRow3,text
+Row 3 ICD Code,ICDCode RequiredRow3,text
+Row 3 Service/Good Requested,ServiceGood Requested RequiredRow3,text
+Row 3 CPT/HCPCS Code,CPTHCPCS Code If knownRow3,text
+"Row 3 Other Info (frequency, duration, quantity)",Other Information Frequency Duration Quantity etcRow3,text
+Row 4 Diagnosis,Diagnosis RequiredRow4,text
+Row 4 ICD Code,ICDCode RequiredRow4,text
+Row 4 Service/Good Requested,ServiceGood Requested RequiredRow4,text
+Row 4 CPT/HCPCS Code,CPTHCPCS Code If knownRow4,text
+"Row 4 Other Info (frequency, duration, quantity)",Other Information Frequency Duration Quantity etcRow4,text
+Row 5 Diagnosis,Diagnosis RequiredRow5,text
+Row 5 ICD Code,ICDCode RequiredRow5,text
+Row 5 Service/Good Requested,ServiceGood Requested RequiredRow5,text
+Row 5 CPT/HCPCS Code,CPTHCPCS Code If knownRow5,text
+"Row 5 Other Info (frequency, duration, quantity)",Other Information Frequency Duration Quantity etcRow5,text
+Requesting Physician Signature (typed name),Requesting Physician Signature,text
+Signature Date,Date,date
+Approved,Approved,checkbox
+Denied or Modified,Denied or Modified See separate decision letter,checkbox
+Delay,Delay See separate notification of delay,checkbox
+Previously Denied,Requested treatment has been previously denied,checkbox
+Liability Disputed,Liability for treatment is disputed See separate letter,checkbox
+Authorization Number,Authorization Number if assigned,text
+Response Date,Date_2,date
+Authorized Agent Name,Authorized Agent Name,text
+Agent Signature (typed name),Signature,text
+Agent Phone,Phone_3,text
+Agent Fax,Fax Number_3,text
+Agent Email,Email Address_3,text
+Comments,Comments,text
